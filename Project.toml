@@ -1,0 +1,4 @@
+name = "SlurmScript"
+uuid = "a4156c50-1a14-4b2c-b400-efa1e6655745"
+authors = ["qyli <qiaoyili@buaa.edu.cn>"]
+version = "0.1.0"
