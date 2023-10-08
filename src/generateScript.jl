@@ -17,6 +17,7 @@ function generateScript(
      tpn::Int64 = get(kwargs, :tpn, 1)
      exclude::Union{String, Nothing} = get(kwargs, :exclude, nothing)
      logname::String = get(kwargs, :logname, filename[1:end-3] * ".log") 
+     nthreads_julia::Int64 = get(kwargs, :nthreads_julia, nthreads_slurm)
      nthreads_mkl::Int64 = get(kwargs, :nthreads_mkl, 1)
      heap_size_hint::Int64 = get(kwargs, :heap_size_hint, round(0.8*mem))
      project::String = get(kwargs, :project, pwd())
@@ -40,6 +41,7 @@ function generateScript(
      # julia script
      print(file, "MKL_NUM_THREADS=$(nthreads_mkl) ") # set MKL nthreads
      print(file, "julia ")
+     print(file, "-t$(nthreads_julia) ")
      print(file, "--heap-size-hint=$(heap_size_hint)G ")
      print(file, "--project=$(project) ")
      println(file, jlfile)
