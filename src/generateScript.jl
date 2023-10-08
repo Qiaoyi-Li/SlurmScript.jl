@@ -20,7 +20,7 @@ function generateScript(
      nthreads_mkl::Int64 = get(kwargs, :nthreads_mkl, 1)
      heap_size_hint::Int64 = get(kwargs, :heap_size_hint, round(0.8*mem))
      project::String = get(kwargs, :project, pwd())
-     exclusive::Bool = false
+     exclusive::Bool = get(kwargs, :exclusive, false)
 
      file = open(filename, "w+")
 
