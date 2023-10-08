@@ -1,7 +1,7 @@
 module SlurmScript
 
 export generateScript, sbatchScript
-inlcude("generateScript.jl")
-inlcude("sbatchScript.jl")
+include("generateScript.jl")
+include("sbatchScript.jl")
 
 end # module SlurmScript
