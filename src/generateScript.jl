@@ -21,6 +21,9 @@ function generateScript(
      nthreads_mkl::Int64 = get(kwargs, :nthreads_mkl, 1)
      heap_size_hint::Int64 = get(kwargs, :heap_size_hint, round(0.8*mem))
      project::String = get(kwargs, :project, pwd())
+     depot = get(kwargs, :depot, nothing)
+     offline::Bool= get(kwargs, :offline, false)
+
      exclusive::Bool = get(kwargs, :exclusive, false)
 
      file = open(filename, "w+")
@@ -40,6 +43,8 @@ function generateScript(
 
      # julia script
      print(file, "MKL_NUM_THREADS=$(nthreads_mkl) ") # set MKL nthreads
+     !isnothing(depot) && print(file, "JULIA_DEPOT_PATH=$(depot) ")
+     offline && print(file, "JULIA_PKG_OFFLINE=true ")
      print(file, "julia ")
      print(file, "-t$(nthreads_julia) ")
      print(file, "--heap-size-hint=$(heap_size_hint)G ")
