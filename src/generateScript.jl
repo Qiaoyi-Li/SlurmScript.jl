@@ -4,7 +4,8 @@ function generateScript(
      partition::String,
      mem::Int64,
      nthreads_slurm::Int64,
-     maxtime::String;
+     maxtime::String,
+     Args...;
      kwargs...)
 
      # check args
@@ -23,7 +24,7 @@ function generateScript(
      project::String = get(kwargs, :project, pwd())
      depot = get(kwargs, :depot, nothing)
      offline::Bool= get(kwargs, :offline, false)
-
+     sysimage::Union{String, Nothing} = get(kwargs, :sysimage, nothing)
      exclusive::Bool = get(kwargs, :exclusive, false)
 
      file = open(filename, "w+")
@@ -37,7 +38,7 @@ function generateScript(
      println(file, "#SBATCH --ntasks-per-node=$(tpn)")
      println(file, "#SBATCH --cpus-per-task=$(nthreads_slurm)")
      println(file, "#SBATCH --time=$(maxtime)")
-     !isnothing(exclude) && println(file, "SBATCH --exclude=$(exclude)")
+     !isnothing(exclude) && println(file, "#SBATCH --exclude=$(exclude)")
      exclusive && println(file, "#SBATCH --exclusive")
      println(file, "#SBATCH --output=$(logname)")
 
@@ -49,8 +50,12 @@ function generateScript(
      print(file, "-t$(nthreads_julia) ")
      print(file, "--heap-size-hint=$(heap_size_hint)G ")
      print(file, "--project=$(project) ")
-     println(file, jlfile)
-
+     !isnothing(sysimage) && print(file, "--sysimage=$(sysimage) ")
+     print(file, jlfile)
+     for arg in Args
+          print(file, " $(arg)")
+     end
+     println(file, "")
      close(file)
 
      return filename
