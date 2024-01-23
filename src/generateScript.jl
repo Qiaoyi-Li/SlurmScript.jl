@@ -26,6 +26,7 @@ function generateScript(
      offline::Bool= get(kwargs, :offline, false)
      sysimage::Union{String, Nothing} = get(kwargs, :sysimage, nothing)
      exclusive::Bool = get(kwargs, :exclusive, false)
+     compiled_modules::Bool = get(kwargs, :compiled_modules, false)
 
      file = open(filename, "w+")
 
@@ -48,6 +49,7 @@ function generateScript(
      offline && print(file, "JULIA_PKG_OFFLINE=true ")
      print(file, "julia ")
      print(file, "-t$(nthreads_julia) ")
+     !compiled_modules && print(file, "--compiled-modules=no ")
      print(file, "--heap-size-hint=$(heap_size_hint)G ")
      print(file, "--project=$(project) ")
      !isnothing(sysimage) && print(file, "--sysimage=$(sysimage) ")
