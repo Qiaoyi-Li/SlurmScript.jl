@@ -47,7 +47,7 @@ function generateScript(
      print(file, "MKL_NUM_THREADS=$(nthreads_mkl) ") # set MKL nthreads
      !isnothing(depot) && print(file, "JULIA_DEPOT_PATH=$(depot) ")
      offline && print(file, "JULIA_PKG_OFFLINE=true ")
-     print(file, "julia -Cnative")
+     print(file, "julia -Cnative ")
      print(file, "-t$(nthreads_julia) ")
      !compiled_modules && print(file, "--compiled-modules=no ")
      print(file, "--heap-size-hint=$(heap_size_hint)G ")
