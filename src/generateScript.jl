@@ -14,8 +14,6 @@ function generateScript(
 
      # default
      jobname = get(kwargs, :jobname, filename[a+1:end-3])
-     nodes::Int64 = get(kwargs, :nodes, 1)
-     tpn::Int64 = get(kwargs, :tpn, 1)
      logname::String = get(kwargs, :logname, filename[1:end-3] * ".log")
 
      nthreads_mkl::Int64 = get(kwargs, :nthreads_mkl, 1)
@@ -25,7 +23,6 @@ function generateScript(
      depot = get(kwargs, :depot, nothing)
      offline::Bool = get(kwargs, :offline, false)
      sysimage::Union{String,Nothing} = get(kwargs, :sysimage, nothing)
-     exclusive::Bool = get(kwargs, :exclusive, false)
      compiled_modules::Bool = get(kwargs, :compiled_modules, false)
      slurm_opts = get(kwargs, :slurm_opts, Dict())
 
@@ -41,8 +38,6 @@ function generateScript(
      println(file, "#SBATCH --job-name=$(jobname)")
      println(file, "#SBATCH --partition=$(partition)")
      println(file, "#SBATCH --mem=$(mem)gb")
-     println(file, "#SBATCH --nodes=$(nodes)")
-     println(file, "#SBATCH --ntasks-per-node=$(tpn)")
      println(file, "#SBATCH --cpus-per-task=$(cpus_per_task)")
      println(file, "#SBATCH --time=$(maxtime)")
      println(file, "#SBATCH --output=$(logname)")
@@ -61,7 +56,7 @@ function generateScript(
      print(file, "MKL_NUM_THREADS=$(nthreads_mkl) ") # set MKL nthreads
      !isnothing(depot) && print(file, "JULIA_DEPOT_PATH=$(depot) ")
      offline && print(file, "JULIA_PKG_OFFLINE=true ")
-     print(file, "julia ")
+     print(file, "julia -Cnative")
      print(file, "-t$(nthreads_julia) ")
      !compiled_modules && print(file, "--compiled-modules=no ")
      print(file, "--heap-size-hint=$(heap_size_hint)G ")
