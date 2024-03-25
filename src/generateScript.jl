@@ -24,6 +24,7 @@ function generateScript(
      offline::Bool = get(kwargs, :offline, false)
      sysimage::Union{String,Nothing} = get(kwargs, :sysimage, nothing)
      compiled_modules::Bool = get(kwargs, :compiled_modules, false)
+     cpu_target = get(kwargs, :cpu_target, nothing)
      slurm_opts = get(kwargs, :slurm_opts, Dict())
 
      # check multi-threading consistency
@@ -56,8 +57,9 @@ function generateScript(
      print(file, "MKL_NUM_THREADS=$(nthreads_mkl) ") # set MKL nthreads
      !isnothing(depot) && print(file, "JULIA_DEPOT_PATH=$(depot) ")
      offline && print(file, "JULIA_PKG_OFFLINE=true ")
-     print(file, "julia -Cnative")
+     print(file, "julia ")
      print(file, "-t$(nthreads_julia) ")
+     !isnothing(cpu_target) && print(file, "--cpu-target=$(cpu_target) ")
      !compiled_modules && print(file, "--compiled-modules=no ")
      print(file, "--heap-size-hint=$(heap_size_hint)G ")
      print(file, "--project=$(project) ")
