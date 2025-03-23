@@ -26,6 +26,8 @@ function generateScript(
      compiled_modules::Bool = get(kwargs, :compiled_modules, false)
      cpu_target = get(kwargs, :cpu_target, nothing)
      slurm_opts = get(kwargs, :slurm_opts, Dict())
+     cleantmp::Bool = get(kwargs, :cleantmp, haskey(slurm_opts, "exclusive")) # if this is the only job in this node, clean tmp
+     tmpdir::String = get(kwargs, :tmpdir, ENV["TMPDIR"]) 
 
      # check multi-threading consistency
      @assert cpus_per_task ≥ nthreads_julia * nthreads_mkl
@@ -33,7 +35,6 @@ function generateScript(
 
 
      file = open(filename, "w+")
-
      # slurm parameters
      println(file, "#!/bin/bash")
      println(file, "#SBATCH --job-name=$(jobname)")
@@ -52,6 +53,9 @@ function generateScript(
           end
      end
 
+
+     # clean tmpdir 
+     cleantmp && println(file, "rm -rf $(tmpdir)/*")
 
      # julia script
      print(file, "MKL_NUM_THREADS=$(nthreads_mkl) ") # set MKL nthreads
